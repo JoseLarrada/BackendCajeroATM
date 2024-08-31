@@ -50,7 +50,6 @@ public class RetiroService {
         for (int i = 0; i < extensionNumericaTarjeta; i++) {
             valorNumerico.append(numeroTarjeta.charAt(i));
         }
-        System.out.println(valorNumerico);
         return Integer.parseInt(valorNumerico.toString());
     }
 }
