@@ -9,5 +9,5 @@ public interface RetirosInterface {
     ResponseEntity<String> consultarCuenta(String numeroCuenta);
     ResponseEntity<String> validarClave(TransaccionesDto transaccionesDto);
     ResponseEntity<String> ValidarMonto(TransaccionesDto transaccionesDto);
-    ResponseEntity<Map<Integer, Integer>> retirarDinero(int Monto);
+    ResponseEntity<Map<Integer, Integer>> retirarDinero(int monto);
 }

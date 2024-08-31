@@ -1,9 +1,7 @@
 package com.sistemasInformacion.Cajero.controller;
 
-import com.sistemasInformacion.Cajero.Dto.RetirarDinero;
 import com.sistemasInformacion.Cajero.Dto.TransaccionesDto;
 import com.sistemasInformacion.Cajero.service.NequiService;
-import com.sistemasInformacion.Cajero.service.RetiroService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +11,7 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/retiroNequi")
-public class DispensarDineroController {
+public class NequiController {
     private final NequiService nequiService;
 
     @GetMapping("/{numeroCuenta}")

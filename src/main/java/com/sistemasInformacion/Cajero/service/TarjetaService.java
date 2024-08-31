@@ -11,15 +11,14 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class NequiService implements RetirosInterface{
+public class TarjetaService implements RetirosInterface{
     private final RetiroService retiroService;
     private final RetiroRepository repository;
-    private StringBuilder cadena=new StringBuilder("0");
+
     @Override
     public ResponseEntity<String> consultarCuenta(String numeroCuenta) {
-        if (retiroService.validarCredenciales(numeroCuenta,10)){
-            String numeroCuentaReal=cadena.append(numeroCuenta).toString();
-            if (repository.existsById(numeroCuentaReal)){
+        if (retiroService.validarCredenciales(numeroCuenta,11) && retiroService.validarTarjetaDebito(numeroCuenta)){
+            if (repository.existsById(numeroCuenta)){
                 return ResponseEntity.ok("Puede Continuar");
             }
             return ResponseEntity.badRequest().body("No existe la cuenta");
@@ -29,16 +28,17 @@ public class NequiService implements RetirosInterface{
 
     @Override
     public ResponseEntity<String> validarClave(TransaccionesDto transaccionesDto) {
-        if (transaccionesDto.numeroCuenta().equals(transaccionesDto.valor())){
+        DatosUsuarios cuenta=repository.findById(transaccionesDto.numeroCuenta()).orElse(null);
+        assert cuenta != null;
+        if (cuenta.getClave().equals(transaccionesDto.valor())){
             return ResponseEntity.ok("Puede Continuar");
         }
-        return ResponseEntity.badRequest().body("Codigo incorrecto");
+        return ResponseEntity.badRequest().body("No existe la cuenta");
     }
 
     @Override
     public ResponseEntity<String> ValidarMonto(TransaccionesDto transaccionesDto) {
-        String numeroCuentaReal=cadena.append(transaccionesDto.numeroCuenta()).toString();
-        DatosUsuarios cuenta=repository.findById(numeroCuentaReal).orElse(null);
+        DatosUsuarios cuenta=repository.findById(transaccionesDto.numeroCuenta()).orElse(null);
         int valorRetiro= Integer.parseInt(transaccionesDto.valor());
         assert cuenta != null;
         if (valorRetiro>cuenta.getSaldo()){
@@ -49,7 +49,6 @@ public class NequiService implements RetirosInterface{
 
     @Override
     public ResponseEntity<Map<Integer, Integer>> retirarDinero(int monto) {
-        System.out.println(monto);
         return ResponseEntity.ok(retiroService.dispensarDinero(monto));
     }
 }

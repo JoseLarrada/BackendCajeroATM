@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -12,25 +13,6 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 public class RetiroService {
-    private final DispensadorDineroService dispensador;
-
-    public ResponseEntity<Map<Integer, Integer>> retirarPorNequi(RetirarDinero datos){
-        int EXTENSIONCODIGO = 6; int EXTENSIONTELEFONO = 10;
-        if (validarCredenciales(datos.numeroCuenta(), EXTENSIONTELEFONO) && validarCredenciales(datos.clave(), EXTENSIONCODIGO)){
-            return ResponseEntity.ok(dispensador.dispensarDinero(datos.montoRetiro()));
-        }
-        return ResponseEntity.noContent().build();
-    }
-
-    public ResponseEntity<Map<Integer, Integer>> retirarPorTajetaDebito(RetirarDinero datos){
-        int EXTENSIONCLAVE = 4; int EXTENSIONNUMEROCUENTA = 16;
-        if (validarCredenciales(datos.numeroCuenta(), EXTENSIONNUMEROCUENTA) && validarCredenciales(datos.clave(), EXTENSIONCLAVE)){
-            if (validarTarjetaDebito(datos.numeroCuenta())){
-                return ResponseEntity.ok(dispensador.dispensarDinero(datos.montoRetiro()));
-            }
-        }
-        return ResponseEntity.notFound().build();
-    }
 
     protected boolean validarCredenciales(String credencial,int extension){
         Pattern patronNumerico=Pattern.compile("^-?\\d+$");
@@ -51,5 +33,27 @@ public class RetiroService {
             valorNumerico.append(numeroTarjeta.charAt(i));
         }
         return Integer.parseInt(valorNumerico.toString());
+    }
+    public Map<Integer, Integer> dispensarDinero(int montoSolicitado){
+        int[] billetes = { 10000, 20000, 50000, 100000 }; int suma = 0;
+        Map<Integer, Integer> entregarBilletes = new HashMap<>();
+        for (int billete : billetes) {
+            entregarBilletes.put(billete, 0);
+        }
+        while (montoSolicitado != suma) {
+            for (int i = 0; i < billetes.length; i++) {
+                if(suma+billetes[i]<= montoSolicitado){
+                    suma += billetes[i];
+                    entregarBilletes.put(billetes[i], entregarBilletes.get(billetes[i]) + 1);
+                }
+                for (int j = i + 1; j < billetes.length; j++) {
+                    if(suma+billetes[j]<= montoSolicitado){
+                        suma += billetes[j];
+                        entregarBilletes.put(billetes[j], entregarBilletes.get(billetes[j]) + 1);
+                    }
+                }
+            }
+        }
+        return entregarBilletes;
     }
 }
