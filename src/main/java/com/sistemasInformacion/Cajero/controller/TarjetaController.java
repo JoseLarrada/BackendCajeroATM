@@ -18,16 +18,12 @@ public class TarjetaController {
     public ResponseEntity<String> consultarCuenta(@PathVariable String numeroCuenta){
         return tarjetaService.consultarCuenta(numeroCuenta);
     }
-    @GetMapping("/validarClave")
+    @PostMapping("/validarClave")
     public ResponseEntity<String> validarClave(@RequestBody TransaccionesDto transaccionesDto){
         return tarjetaService.validarClave(transaccionesDto);
     }
-    @GetMapping("/validarMonto")
+    @PostMapping("/validarMonto")
     public ResponseEntity<String> ValidarMonto(@RequestBody TransaccionesDto transaccionesDto){
         return tarjetaService.ValidarMonto(transaccionesDto);
-    }
-    @GetMapping("/dispensarDinero/{monto}")
-    public ResponseEntity<Map<Integer, Integer>> retirarDinero(@PathVariable int monto){
-        return tarjetaService.retirarDinero(monto);
     }
 }

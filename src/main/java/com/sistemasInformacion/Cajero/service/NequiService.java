@@ -14,11 +14,11 @@ import java.util.Map;
 public class NequiService implements RetirosInterface{
     private final RetiroService retiroService;
     private final RetiroRepository repository;
-    private StringBuilder cadena=new StringBuilder("0");
     @Override
     public ResponseEntity<String> consultarCuenta(String numeroCuenta) {
         if (retiroService.validarCredenciales(numeroCuenta,10)){
-            String numeroCuentaReal=cadena.append(numeroCuenta).toString();
+            String numeroCuentaReal= "0" + numeroCuenta;
+            System.out.println(numeroCuentaReal);
             if (repository.existsById(numeroCuentaReal)){
                 return ResponseEntity.ok("Puede Continuar");
             }
@@ -29,16 +29,20 @@ public class NequiService implements RetirosInterface{
 
     @Override
     public ResponseEntity<String> validarClave(TransaccionesDto transaccionesDto) {
-        if (transaccionesDto.numeroCuenta().equals(transaccionesDto.valor())){
-            return ResponseEntity.ok("Puede Continuar");
+        System.out.println(transaccionesDto);
+        if (retiroService.validarCredenciales(transaccionesDto.valor(), 6)){
+            if (transaccionesDto.numeroCuenta().equals(transaccionesDto.valor())){
+                return ResponseEntity.ok("Puede Continuar");
+            }
+            return ResponseEntity.badRequest().body("Codigo incorrecto");
         }
-        return ResponseEntity.badRequest().body("Codigo incorrecto");
+        return ResponseEntity.badRequest().body("Limite superado");
     }
 
     @Override
     public ResponseEntity<String> ValidarMonto(TransaccionesDto transaccionesDto) {
-        String numeroCuentaReal=cadena.append(transaccionesDto.numeroCuenta()).toString();
-        DatosUsuarios cuenta=repository.findById(numeroCuentaReal).orElse(null);
+        System.out.println(transaccionesDto);
+        DatosUsuarios cuenta=repository.findById(transaccionesDto.numeroCuenta()).orElse(null);
         int valorRetiro= Integer.parseInt(transaccionesDto.valor());
         assert cuenta != null;
         if (valorRetiro>cuenta.getSaldo()){

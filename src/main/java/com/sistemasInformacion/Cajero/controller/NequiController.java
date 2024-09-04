@@ -18,11 +18,11 @@ public class NequiController {
     public ResponseEntity<String> consultarCuenta(@PathVariable String numeroCuenta){
         return nequiService.consultarCuenta(numeroCuenta);
     }
-    @GetMapping("/validarClave")
+    @PostMapping("/validarClave")
     public ResponseEntity<String> validarClave(@RequestBody TransaccionesDto transaccionesDto){
         return nequiService.validarClave(transaccionesDto);
     }
-    @GetMapping("/validarMonto")
+    @PostMapping("/validarMonto")
     public ResponseEntity<String> ValidarMonto(@RequestBody TransaccionesDto transaccionesDto){
         return nequiService.ValidarMonto(transaccionesDto);
     }

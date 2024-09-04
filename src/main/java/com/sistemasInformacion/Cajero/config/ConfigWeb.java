@@ -9,7 +9,7 @@ public class ConfigWeb implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins("https://tu-dominio.github.io")
+                .allowedOrigins("https://tu-dominio.github.io", "http://localhost:5173")
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowedHeaders("*")
                 .allowCredentials(true);

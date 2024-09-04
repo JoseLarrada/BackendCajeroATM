@@ -28,12 +28,15 @@ public class TarjetaService implements RetirosInterface{
 
     @Override
     public ResponseEntity<String> validarClave(TransaccionesDto transaccionesDto) {
-        DatosUsuarios cuenta=repository.findById(transaccionesDto.numeroCuenta()).orElse(null);
-        assert cuenta != null;
-        if (cuenta.getClave().equals(transaccionesDto.valor())){
-            return ResponseEntity.ok("Puede Continuar");
+        if (retiroService.validarCredenciales(transaccionesDto.valor(), 4)){
+            DatosUsuarios cuenta=repository.findById(transaccionesDto.numeroCuenta()).orElse(null);
+            assert cuenta != null;
+            if (cuenta.getClave().equals(transaccionesDto.valor())){
+                return ResponseEntity.ok("Puede Continuar");
+            }
+            return ResponseEntity.badRequest().body("No existe la cuenta");
         }
-        return ResponseEntity.badRequest().body("No existe la cuenta");
+        return ResponseEntity.badRequest().body("Limite superado");
     }
 
     @Override
